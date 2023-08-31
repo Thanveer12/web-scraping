@@ -11,8 +11,13 @@ function Scraping() {
                   throw new Error('Network response was not ok');
                 }
                 
-                const data = await response.text();
-                const sanitizedContent = data.replace(/&(?!#?\w+;)/g, '&amp;');
+                const data = await response.json();
+                const sanitizedContent = data.web.replace(/&(?!#?\w+;)/g, '&amp;');
+                if ('ad' in data) {
+                    const ad = JSON.parse(data['ad']);
+                    console.log(ad, 'add')
+                }
+                const api = data.apiCalls;
                 const dom = new DOMParser().parseFromString(sanitizedContent, "text/html");
                 console.log(dom)
 
@@ -23,13 +28,33 @@ function Scraping() {
                 const link = dom.getElementsByTagName('link');
                 const input = dom.getElementsByTagName('input');
 
+
                 const scraperContainer = document.getElementById('scraper-container')
+                const apiDiv = document.createElement('div')
+                const apiHeading = document.createElement('h1');
+                
+                apiDiv.append(apiHeading);
+                const apiUl = document.createElement('ul');
+                for (let i = 0; i < api.length; i++){
+                    apiHeading.innerHTML = 'Network Call';
+                    // scraperContainer.append(button[i]);
+                    const apiLi = document.createElement('li');
+                    apiLi.innerHTML = api[i];
+                    apiUl.append(apiLi);
+                }
+                apiDiv.append(apiUl);
+                scraperContainer.append(apiDiv);
+
+
+
+
                 const linkDiv = document.createElement('div')
                 const linkHeading = document.createElement('h1');
-                linkHeading.innerHTML = 'Link';
+                // linkHeading.innerHTML = 'Link';
                 linkDiv.append(linkHeading);
                 const linkUl = document.createElement('ul');
                 for (let i = 0; i < link.length; i++){
+                    linkHeading.innerHTML = 'Link';
                     // scraperContainer.append(button[i]);
                     const linkLi = document.createElement('li');
                     linkLi.innerHTML = '<b>href-</b>' + link[i].href + '  <b>id-</b>' + link[i].id;
@@ -40,11 +65,12 @@ function Scraping() {
 
                 const metaDiv = document.createElement('div')
                 const metaHeading = document.createElement('h1');
-                metaHeading.innerHTML = 'Meta';
+                // metaHeading.innerHTML = 'Meta';
                 metaDiv.append(metaHeading);
                 const metaUl = document.createElement('ul');
                 for (let i = 0; i < meta.length; i++){
                     // scraperContainer.append(button[i]);
+                    metaHeading.innerHTML = 'Meta';
                     const metaLi = document.createElement('li');
                     metaLi.innerHTML = '<b>content-</b>' + meta[i].content + '  <b>property-</b>' + meta[i].property + ' <b>name-</b>' + meta[i].name;
                     metaUl.append(metaLi);
@@ -55,10 +81,11 @@ function Scraping() {
 
                 const buttonDiv = document.createElement('div')
                 const buttonHeading = document.createElement('h1');
-                buttonHeading.innerHTML = 'Link';
+                // buttonHeading.innerHTML = 'Button';
                 buttonDiv.append(buttonHeading);
                 const buttonUl = document.createElement('ul');
                 for (let i = 0; i < button.length; i++){
+                    buttonHeading.innerHTML = 'Button';
                     const buttonLi = document.createElement('li');
                     buttonLi.innerHTML = button[i].innerText;
                     // scraperContainer.append(button[i]);
@@ -69,10 +96,11 @@ function Scraping() {
 
                 const anchorDiv = document.createElement('div')
                 const anchorHeading = document.createElement('h1');
-                anchorHeading.innerHTML = 'Anchor';
+                // anchorHeading.innerHTML = 'Anchor';
                 anchorDiv.append(anchorHeading);
                 const anchorUl = document.createElement('ul');
                 for (let i = 0; i < anchor.length; i++){
+                    anchorHeading.innerHTML = 'Anchor';
                     // scraperContainer.append(anchor[i]);
                     const anchorLi = document.createElement('li');
                     anchorLi.innerHTML = '<b>href-</b>' + anchor[i].href + ' <b>content-</b>'+ anchor[i].innerText;
@@ -85,11 +113,12 @@ function Scraping() {
 
                 const scriptDiv = document.createElement('div')
                 const scriptHeading = document.createElement('h1');
-                scriptHeading.innerHTML = 'Script';
+                // scriptHeading.innerHTML = 'Script';
                 scriptDiv.append(scriptHeading);
                 const scriptUl = document.createElement('ul');
                 for (let i = 0; i < script.length; i++){
                     // scraperContainer.append(script[i]);
+                    scriptHeading.innerHTML = 'Script';
                     const li = document.createElement('li');
                     li.innerHTML = '<b>src-</b>' + script[i].src + ' <b>id-</b>' + script[i].id ;
                     // scriptDiv.innerHTML += '<br>'+script[i].id + '---' + script[i].src;
@@ -101,10 +130,11 @@ function Scraping() {
 
                 const inputDiv = document.createElement('div')
                 const inputHeading = document.createElement('h1');
-                inputHeading.innerHTML = 'Input';
+                // inputHeading.innerHTML = 'Input';
                 inputDiv.append(inputHeading);
                 const inputUl = document.createElement('ul');
                 for (let i = 0; i < input.length; i++){
+                    inputHeading.innerHTML = 'Input';
                     const inputLi = document.createElement('li');
                     inputLi.innerHTML = '<b>name-</b>' + input[i].name + ' <b>placeHolder-</b>' + input[i].placeholder;
                     inputUl.append(inputLi);

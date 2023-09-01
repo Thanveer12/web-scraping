@@ -13,8 +13,57 @@ function Scraping() {
                 
                 const data = await response.json();
                 const sanitizedContent = data.web.replace(/&(?!#?\w+;)/g, '&amp;');
+                const scraperContainer = document.getElementById('scraper-container')
                 if ('ad' in data) {
                     const ad = JSON.parse(data['ad']);
+                    const adUnit = ad.adUnits;
+                    const adDiv = document.createElement('div');
+                    const adHeading = document.createElement('h1');
+                    adDiv.append(adHeading);
+                    
+                    adUnit.forEach(element => {
+                        const adUl = document.createElement('ul')
+                        adHeading.innerHTML = 'AD Data';
+                        const adbidHeading = document.createElement('h2');
+                        adbidHeading.innerHTML = element.code;
+                        adDiv.append(adbidHeading);
+                        const bids = element.bids;
+                        bids.forEach(bid => {
+                            const adLi = document.createElement('li');
+                            adLi.innerHTML = bid.bidder;
+                            const adSubUl = document.createElement('ul')
+                            const adSubLi = document.createElement('li');
+                            adSubLi.innerHTML = '<b>Params-</b>'+ JSON.stringify(bid.params)
+                            adSubUl.append(adSubLi);
+                            adLi.append(adSubUl);
+                            adUl.append(adLi);
+
+                        })
+                        adDiv.append(adUl);
+                        const adSize = element?.mediaTypes?.banner?.sizes;
+                        adSize.forEach(size => {
+                            const adSizeDiv = document.createElement('div');
+                            adSizeDiv.innerHTML = '<b>Width-</b>' + size?.[0] + " " + '<b>Height-</b>' + size?.[1];
+                            adDiv.append(adSizeDiv);
+                        })
+                        
+                    });
+
+                    const installedModules = ad?.installedModules;
+                    const adModuleHeading = document.createElement('h3');
+                    adModuleHeading.innerHTML = 'Installed Moduled or Adapters in Ad'
+                    adDiv.append(adModuleHeading);
+                    const adapterUl = document.createElement('ul')
+                    installedModules.forEach(module => {
+                        const li = document.createElement('li');
+                        li.innerHTML = module;
+                        adapterUl.append(li);
+                    })
+                    adDiv.append(adapterUl)
+                    const adVersionHeading = document.createElement('h4');
+                    adVersionHeading.innerHTML = 'Ad Loaded-' + ad?.libLoaded + " " + 'Version:' + ad?.version;
+                    adDiv.append(adVersionHeading)
+                    scraperContainer.append(adDiv);
                     console.log(ad, 'add')
                 }
                 const api = data.apiCalls;
@@ -29,7 +78,7 @@ function Scraping() {
                 const input = dom.getElementsByTagName('input');
 
 
-                const scraperContainer = document.getElementById('scraper-container')
+                
                 const apiDiv = document.createElement('div')
                 const apiHeading = document.createElement('h1');
                 
@@ -39,7 +88,7 @@ function Scraping() {
                     apiHeading.innerHTML = 'Network Call';
                     // scraperContainer.append(button[i]);
                     const apiLi = document.createElement('li');
-                    apiLi.innerHTML = api[i];
+                    apiLi.innerHTML ='<b>URL-</b>' + api[i].url +" " + ' <b>Payload- </b>' + api[i]?.payload;
                     apiUl.append(apiLi);
                 }
                 apiDiv.append(apiUl);
